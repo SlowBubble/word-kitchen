@@ -4,8 +4,8 @@ export class WordCard extends HTMLElement {
     super();
   }
 
-  render(word, highlightedCharIdx = -1, hue = 100, saturation = 100, lightness = 100) {
-    const annotatedChars = word.split('').map((char, idx) => idx === highlightedCharIdx ? `<span style='color:red'>${word}</span>` : char);
+  render(word, startHighlightIdx = -1, endHighlightIdx = -1, hue = 100, saturation = 100, lightness = 100) {
+    const annotatedChars = word.split('').map((char, idx) => startHighlightIdx <= idx && idx <= endHighlightIdx ? `<span style='color:red'>${char}</span>` : char);
     this.innerHTML = genHtml(annotatedChars.join(''), hue, saturation, lightness);
   }
 }
