@@ -45,33 +45,45 @@ export function buildDialogues(word, level=1) {
   if (level <= 1) {
     return dialogues;
   }
-  dialogues.push(
-    {
-      speech:  `How do you spell, ${word}?`,
+
+  const chars = word.split('');
+
+  if (level === 2) {
+    dialogues.push(
+      {
+        speech:  `How do you spell, ${word}?`,
+        stop: true,
+        expectedKey: ' ',
+        speechForUnexpectedKey: wantSpace,
+        display: word,
+        voiceIdx: 0,
+      });
+    chars.forEach((char, idx) => dialogues.push({
+      speech: char.toLowerCase(),
+      stop: false,
+      expectedKey: ' ',
+      speechForUnexpectedKey: wantSpace,
+      startHighlightIdx: idx,
+      endHighlightIdx: idx,
+        display: word,
+        voiceIdx: 1,
+        delayMs: 500,
+    }));
+    dialogues.push({
+      speech: word,
       stop: true,
       expectedKey: ' ',
       speechForUnexpectedKey: wantSpace,
       display: word,
-      voiceIdx: 0,
-    });
-  const chars = word.split('');
-  chars.forEach((char, idx) => dialogues.push({
-    speech: char.toLowerCase(),
-    stop: idx === chars.length - 1,
-    expectedKey: ' ',
-    speechForUnexpectedKey: wantSpace,
-    startHighlightIdx: idx,
-    endHighlightIdx: idx,
-      display: word,
       voiceIdx: 1,
-      delayMs: 500,
-  }));
-  if (level <= 2) {
+      startHighlightIdx: 0,
+      endHighlightIdx: word.length,
+    })
     return dialogues;
   }
 
   dialogues.push({
-    speech:  `Can you type it out?`,
+    speech:  `How do you type, ${word}?`,
     stop: false,
       display: word,
       voiceIdx: 0,
