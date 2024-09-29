@@ -28,15 +28,18 @@ export class WordsMgr {
     this.isBusyActing = true;
 
     const dialogue = this.dialogues[this.dialogueIdx];
-    console.log('input: ', inputKey, ', expected: ', dialogue.expectedKey);
-    if (inputKey === dialogue.expectedKey) {
+    if (dialogue.expectedKey) {
+      console.log('input: ', inputKey, ', expected: ', dialogue.expectedKey);
+    }
+    if (!dialogue.expectedKey || inputKey === dialogue.expectedKey) {
       this.dialogueIdx = (this.dialogueIdx + 1) % this.dialogues.length;
       const nextDialogue = this.dialogues[this.dialogueIdx];
       let goodVoices = window.speechSynthesis.getVoices().filter(voice => voice.lang === 'en-US')
       goodVoices = goodVoices.slice(0, 2);
+      goodVoices.reverse();
       const voice = goodVoices[nextDialogue.voiceIdx % goodVoices.length];
       const renderFunc = _ => this.render(nextDialogue.display, nextDialogue.startHighlightIdx, nextDialogue.endHighlightIdx);
-      const utterFunc = async _ => await utter(nextDialogue.speech, nextDialogue.delayMs, 0.4, voice);
+      const utterFunc = async _ => await utter(nextDialogue.speech, nextDialogue.delayMs, nextDialogue.speechRate || 0.8, voice);
       if (nextDialogue.renderAfterUttering) {
         await utterFunc();
         renderFunc();
@@ -56,7 +59,7 @@ export class WordsMgr {
   }
 }
 
-async function utter(sentence, delayMs = 0, rate = 0.5, voice = null) {
+async function utter(sentence, delayMs = 0, rate = 0.8, voice = null) {
   return new Promise(resolve => {
     const speechSynthesisUtterance = new SpeechSynthesisUtterance(sentence);
     if (voice) {
