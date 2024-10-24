@@ -1,9 +1,3 @@
-
-// export class Dialogue {
-//   constructor() {
-//   }
-// }
-
 const wantSpace = 'Please press the space-bar.';
 
 export const introDialogue = {
@@ -100,6 +94,34 @@ export function buildDialogues(word, level=1) {
       delayMs: 500,
     });
   }
+
+  if (level == 4) {
+    dialogues.push({
+      speech:  `How do you type, ${word}?`,
+      stop: false,
+      display: '_'.repeat(word.length),
+      voiceIdx: 0,
+    });
+    chars.forEach((char, idx) => dialogues.push({
+      speech: idx === 0 ? '' : chars[idx - 1].toLowerCase(),
+      stop: true,
+      expectedKey: char.toLowerCase(),
+      speechForUnexpectedKey: `Try typing, ${char.toLowerCase()}.`,
+      startHighlightIdx: idx,
+      endHighlightIdx: idx,
+      display: '_'.repeat(idx) + char + '_'.repeat(word.length - idx - 1),
+      voiceIdx: 1,
+      renderAfterUttering: true,
+    }));
+    dialogues.push({
+      speech: `${chars[chars.length - 1].toLowerCase()}.`,
+      display: word,
+      voiceIdx: 1,
+      renderAfterUttering: true,
+      delayMs: 500,
+    });
+  }
+
   dialogues.push({
     speech: generateExlamation(),
     display: `🎊 ${word} 🎊`,
