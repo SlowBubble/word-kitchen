@@ -11,6 +11,7 @@ export class WordsMgr {
     this.dialogueIdx = 0;
     this.stuck = false;
     this.isBusyActing = false;
+    this.level = level;
   }
 
   render(word, startHighlightIdx=-1, endHighlightIdx=-1) {
