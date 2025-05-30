@@ -2,7 +2,7 @@ main();
 
 function main() {
   // Each word has chunks delimited by '|'
-  const words = [
+  const level1Words = [
     'Ba|na|na',
     'Ma|ma',
     'Pa|pa',
@@ -17,11 +17,28 @@ function main() {
     'To|fu',
     'To|ma|to',
     'Po|ta|to',
-    'Ai|ki|do',
     'A|vo|ca|do',
     'Ti|ra|mi|su',
     'Ge|la|to',
   ];
+  const level2Words = [
+    'Ai|ki|do',
+    'Ta|ble',
+    'Ca|ble',
+    'Ap|ple',
+    'Ma|ple',
+    'Hip|po',
+    'Wa|ter',
+    'La|ter',
+    'Loi|ter',
+    'Mo|tor',
+  ];
+  
+  // Get game level from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const gameLevel = urlParams.get('game_level');
+  
+  const words = gameLevel === '2' ? level2Words : level1Words;
   setupGame(words);
 }
 
@@ -73,10 +90,10 @@ function setupGame(words) {
     });
   }
 
-  async function speak(text) {
+  async function speak(text, rate=0.5) {
     isSpeaking = true;
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.8;
+    utterance.rate = rate;
     window.speechSynthesis.speak(utterance);
     return new Promise(resolve => {
       utterance.onend = () => {
@@ -91,11 +108,15 @@ function setupGame(words) {
     
     for (let i = 0; i < chunks.length; i++) {
       displayWord(word, i);
-      const letters = chunks[i].toUpperCase().split('').map(char => {
-        return char === 'A' ? "eh" : char;
-      })
-      await speak(letters.join(','));
-      await new Promise(resolve => setTimeout(resolve, 400));
+      let letters = chunks[i].toUpperCase().split('')
+      if (letters.length === 1) {
+        letters = letters.map(char => {
+          return char === 'A' ? 'eh' : char;
+        });
+      }
+      console.log(letters)
+      await speak(letters.join(' '));
+      await new Promise(resolve => setTimeout(resolve, 600));
     }
     
     displayWord(word, -1, true); // Highlight full word
