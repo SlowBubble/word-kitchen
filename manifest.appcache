@@ -1,0 +1,14 @@
+CACHE MANIFEST
+# v1
+
+index.html
+main.js
+chunk.js
+WordCardComponent.js
+sanitizeName.js
+WordsMgr2.js
+dialogue.js
+badWords.js
+
+NETWORK:
+*
