@@ -53,11 +53,19 @@ function main() {
 }
 
 function setupKeyboardControl(wordsMgr) {
+  const pressedKeys = new Set();
   document.body.onkeydown = evt => {
     if (evt.ctrlKey || evt.altKey || evt.metaKey) {
       return;
     }
+    if (pressedKeys.has(evt.key)) {
+      return;
+    }
+    pressedKeys.add(evt.key);
     wordsMgr.execute(evt.key);
+  };
+  document.body.onkeyup = evt => {
+    pressedKeys.delete(evt.key);
   };
 }
 
