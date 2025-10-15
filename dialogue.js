@@ -20,7 +20,12 @@ export const outroDialogue = {
   speechForUnexpectedKey: 'Game time is over. Go take a break.',
 }
 
-export function buildDialogues(word, level=1) {
+export function buildDialogues(word, level=1, addWelcomeMessage=false) {
+  let welcomeMessage = '';
+  if (addWelcomeMessage) {
+    const name = level === 3 ? 'Word Kitchen' : 'Spelling Bumblebee';
+    welcomeMessage = `Welcome to ${name}! Let's get started.`;
+  }
   let dialogues = [];
   if (level < 3) {
     dialogues = [
@@ -76,7 +81,7 @@ export function buildDialogues(word, level=1) {
 
   if (level == 3) {
     dialogues.push({
-      speech:  `How do you type, ${word}?`,
+      speech:  `${welcomeMessage} How do you type, ${word}?`,
       stop: false,
         display: word,
         voiceIdx: 0,
@@ -102,7 +107,7 @@ export function buildDialogues(word, level=1) {
   }
   if (level == 4) {
     dialogues.push({
-      speech:  `How do you type, ${word}?`,
+      speech:  `${welcomeMessage} How do you type, ${word}?`,
       stop: false,
         display: word,
         voiceIdx: 0,

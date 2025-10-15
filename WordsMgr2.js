@@ -4,8 +4,8 @@ export class WordsMgr {
   constructor(wordCard, words, level) {
     this.wordCard = wordCard;
     this.level = level;
-    this.dialogues = words.flatMap(word => {
-      return buildDialogues(word, level);
+    this.dialogues = words.flatMap((word, idx) => {
+      return buildDialogues(word, level, idx === 0);
     });
     this.dialogues.unshift(introDialogue);
     this.dialogues.push(outroDialogue);
