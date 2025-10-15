@@ -30,13 +30,12 @@ function main() {
 
   if (words.length === 0) {
     words = [
-    'baby',
-    'Google',
-    'mom',
-    'dad',
-    'grandpa',
-    'wolf',
-    'pig',
+    'Car',
+    'Mom',
+    'Dad',
+    'Dog',
+    'Cat',
+    'Emma',
     ];
   }
   words = words.map(word => {

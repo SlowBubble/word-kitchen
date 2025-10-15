@@ -100,6 +100,32 @@ export function buildDialogues(word, level=1) {
       delayMs: 500,
     });
   }
+  if (level == 4) {
+    dialogues.push({
+      speech:  `How do you type, ${word}?`,
+      stop: false,
+        display: word,
+        voiceIdx: 0,
+    });
+    chars.forEach((char, idx) => dialogues.push({
+      speech: idx === 0 ? '' : chars[idx - 1].toLowerCase(),
+      stop: true,
+      expectedKey: char.toLowerCase(),
+      speechForUnexpectedKey: `Wrong letter!`,
+      startHighlightIdx: idx,
+      endHighlightIdx: idx,
+      display: word,
+        voiceIdx: 1,
+        renderAfterUttering: true,
+    }));
+    dialogues.push({
+      speech: `${chars[chars.length - 1].toLowerCase()}.`,
+      display: word,
+      voiceIdx: 1,
+      renderAfterUttering: true,
+      delayMs: 500,
+    });
+  }
   dialogues.push({
     speech: generateExlamation(),
     display: `🎊 ${word} 🎊`,

@@ -1,11 +1,19 @@
-
 export class WordCard extends HTMLElement {
   constructor() {
     super();
   }
 
-  render(word, startHighlightIdx = -1, endHighlightIdx = -1, hue = 100, saturation = 100, lightness = 100) {
-    const annotatedChars = word.split('').map((char, idx) => startHighlightIdx <= idx && idx <= endHighlightIdx ? `<span style='color:red'>${char}</span>` : char);
+  render(word, startHighlightIdx = -1, endHighlightIdx = -1, hue = 100, saturation = 100, lightness = 100, hideAfterHighlight = false) {
+    let annotatedChars;
+    if (hideAfterHighlight && endHighlightIdx >= 0) {
+      annotatedChars = word.split('').map((char, idx) => {
+        if (idx >= endHighlightIdx) return '<span style="visibility:hidden">_</span>';
+        if (startHighlightIdx <= idx && idx < endHighlightIdx) return `<span style='color:red'>${char}</span>`;
+        return char;
+      });
+    } else {
+      annotatedChars = word.split('').map((char, idx) => startHighlightIdx <= idx && idx <= endHighlightIdx ? `<span style='color:red'>${char}</span>` : char);
+    }
     this.innerHTML = genHtml(annotatedChars.join(''), hue, saturation, lightness);
   }
 }

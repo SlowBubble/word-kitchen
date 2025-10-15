@@ -3,6 +3,7 @@ import { buildDialogues, introDialogue, outroDialogue } from "./dialogue.js";
 export class WordsMgr {
   constructor(wordCard, words, level) {
     this.wordCard = wordCard;
+    this.level = level;
     this.dialogues = words.flatMap(word => {
       return buildDialogues(word, level);
     });
@@ -18,7 +19,8 @@ export class WordsMgr {
     const hue = (hash % 360) + 220;
     const saturation = (hash % 23) + 50;
     const lightness = (hash % 3) + 95;
-    this.wordCard.render(word, startHighlightIdx, endHighlightIdx, hue, saturation, lightness);
+    const hideAfterHighlight = this.level === 4;
+    this.wordCard.render(word, startHighlightIdx, endHighlightIdx, hue, saturation, lightness, hideAfterHighlight);
   }
 
   async execute(inputKey, normalFlow=true) {
