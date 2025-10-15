@@ -23,7 +23,7 @@ export const outroDialogue = {
 export function buildDialogues(word, level=1, addWelcomeMessage=false) {
   let welcomeMessage = '';
   if (addWelcomeMessage) {
-    const name = level === 3 ? 'Word Kitchen' : 'Spelling Bumblebee';
+    const name = 'Word Kitchen';
     welcomeMessage = `Welcome to ${name}! Let's get started.`;
   }
   let dialogues = [];
@@ -107,7 +107,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
   }
   if (level == 4) {
     dialogues.push({
-      speech:  `${welcomeMessage} How do you type, ${word}?`,
+      speech:  `How do you type, ${word}?`,
       stop: false,
         display: word,
         voiceIdx: 0,

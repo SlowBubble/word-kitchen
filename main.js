@@ -33,9 +33,15 @@ function main() {
     'Car',
     'Mom',
     'Dad',
+    'Daddy',
+    // 'Mama',
+    // 'Papa',
+    // 'Papaya',
     'Dog',
     'Cat',
     'Emma',
+    // 'Jacob',
+    'Bingo',
     ];
   }
   words = words.map(word => {
