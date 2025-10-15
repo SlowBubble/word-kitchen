@@ -54,7 +54,7 @@ export class WordsMgr {
         await this.execute(nextDialogue.expectedKey, false);
       }
     } else {
-      await utter(dialogue.speechForUnexpectedKey);
+      await utter(dialogue.speechForUnexpectedKey || generateWrongLetterMessage());
     }
 
     this.isBusyActing = false;
@@ -87,3 +87,47 @@ function hashCode(str) {
     return hash;
 }
 
+const wrongLetterFirstParts = [
+  "",
+  "Oops!",
+  "Not quite!",
+  "Nope! ",
+  "Incorrect!",
+  "Incorrect choice!",
+  "Incorrect key!",
+  "Incorrect letter!",
+  "Wrong choice!",
+  "Wrong key!",
+  "Wrong letter!",
+  "Wrong character!",
+  "Don't give up!",
+  "Don't lose hope!",
+  "That's not the one!",
+  "Don't be discouraged!",
+  "Stop rushing!"
+];
+
+const wrongLetterSecondParts = [
+  "Give it another go!",
+  "Almost there!",
+  "Keep trying!",
+  "Try a different key.",
+  "You're close!",
+  "Keep searching!",
+  "You can do it!",
+  "Keep at it!",
+  "Take a deep breath and try again.",
+  "Stay positive and try again.",
+  "Believe in yourself and keep trying.",
+  "Think before you act!",
+  "You will get there!",
+  "You may want to hire a tutor.",
+  "You may want to hire a coach.",
+  "If you want to hire a tutor, my rate is $99 an hour.",
+];
+
+function generateWrongLetterMessage() {
+  const firstPart = wrongLetterFirstParts[Math.floor(Math.random() * wrongLetterFirstParts.length)];
+  const secondPart = wrongLetterSecondParts[Math.floor(Math.random() * wrongLetterSecondParts.length)];
+  return `${firstPart} ${secondPart}`;
+}
