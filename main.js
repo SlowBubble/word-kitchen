@@ -33,16 +33,10 @@ function main() {
     'Car',
     'Mom',
     'Dad',
-    // 'Daddy',
-    'Mommy',
-    'Over',
     'Mama',
     'Papa',
-    // 'Papaya',
     'Dog',
     'Cat',
-    'Emma',
-    // 'Jacob',
     'Bingo',
     ];
   }
