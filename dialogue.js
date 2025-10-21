@@ -116,7 +116,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
       speech: idx === 0 ? '' : chars[idx - 1].toLowerCase(),
       stop: true,
       expectedKey: char.toLowerCase(),
-      speechForUnexpectedKey: '',
+      speechForUnexpectedKey: word.toLowerCase(),
       startHighlightIdx: idx,
       endHighlightIdx: idx,
       display: word,
