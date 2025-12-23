@@ -1,9 +1,10 @@
 import { buildDialogues, introDialogue, outroDialogue } from "./dialogue.js";
   
 export class WordsMgr {
-  constructor(wordCard, words, level) {
+  constructor(wordCard, words, level, showFingers = true) {
     this.wordCard = wordCard;
     this.level = level;
+    this.showFingers = showFingers;
     this.dialogues = words.flatMap((word, idx) => {
       return buildDialogues(word, level, idx === 0);
     });
@@ -14,13 +15,13 @@ export class WordsMgr {
     this.isBusyActing = false;
   }
 
-  render(word, startHighlightIdx=-1, endHighlightIdx=-1) {
+  render(word, startHighlightIdx=-1, endHighlightIdx=-1, expectedChar=null) {
     const hash = Math.abs(hashCode(word))
     const hue = (hash % 360) + 220;
     const saturation = (hash % 23) + 50;
     const lightness = (hash % 3) + 95;
     const hideAfterHighlight = this.level === 4;
-    this.wordCard.render(word, startHighlightIdx, endHighlightIdx, hue, saturation, lightness, hideAfterHighlight);
+    this.wordCard.render(word, startHighlightIdx, endHighlightIdx, hue, saturation, lightness, hideAfterHighlight, this.level, expectedChar, this.showFingers);
   }
 
   async execute(inputKey, normalFlow=true) {
@@ -40,7 +41,10 @@ export class WordsMgr {
       goodVoices = goodVoices.slice(0, 2);
       goodVoices.reverse();
       const voice = goodVoices[nextDialogue.voiceIdx % goodVoices.length];
-      const renderFunc = _ => this.render(nextDialogue.display, nextDialogue.startHighlightIdx, nextDialogue.endHighlightIdx);
+      const renderFunc = _ => {
+        const expectedChar = (this.level === 3 || this.level === 4) && nextDialogue.expectedKey ? nextDialogue.expectedKey : null;
+        this.render(nextDialogue.display, nextDialogue.startHighlightIdx, nextDialogue.endHighlightIdx, expectedChar);
+      };
       const utterFunc = async _ => await utter(nextDialogue.speech, nextDialogue.delayMs, nextDialogue.speechRate || 0.8, voice);
       if (nextDialogue.renderAfterUttering) {
         await utterFunc();

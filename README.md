@@ -1,5 +1,4 @@
 
-# TODO
+# m1a
 
-- Build a level that only reveals the correct letter you have typed
-  - Also, just say "Wrong letter!"
+- For game level 3 and 4, when a certain letter is expected to be typed, I would like to display 5 fingers on the left side and 5 fingers on the right side at the bottom of the card, and then show which finger the user is supposed to use to type that letter.

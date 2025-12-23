@@ -9,6 +9,7 @@ function main() {
   const paramsMap = getUrlParamsMap();
   let lowerCase = false;
   let gameLevel = 1;
+  let showFingers = true; // Default to true
   let words = [];
   paramsMap.forEach((value, key) => {
     const possName = sanitizeName(value);
@@ -21,6 +22,10 @@ function main() {
     }
     if (key === 'game_level') {
       gameLevel = parseInt(value) || 1;
+      return;
+    }
+    if (key === 'show_fingers') {
+      showFingers = value.toLowerCase() !== 'false'; // false only if explicitly set to 'false'
       return;
     }
     words.push(key);
@@ -48,7 +53,7 @@ function main() {
   })
 
   shuffleArray(words);
-  const wordsMgr = new WordsMgr(wordCard, words, gameLevel);
+  const wordsMgr = new WordsMgr(wordCard, words, gameLevel, showFingers);
 
   setupKeyboardControl(wordsMgr);
 }
