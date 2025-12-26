@@ -1,8 +1,8 @@
 main();
 
 function main() {
-  // Each word has chunks delimited by '|'
-  const level1Words = [
+  // Combined word list
+  const allWords = [
     'Ba|na|na',
     'Ma|ma',
     'Pa|pa',
@@ -21,8 +21,6 @@ function main() {
     'A|vo|ca|do',
     'To|fu',
     'Ti|ra|mi|su',
-  ];
-  const level2Words = [
     'Ta|ble',
     'Ca|ble',
     'Ap|ple',
@@ -34,12 +32,52 @@ function main() {
     'Mo|tor',
   ];
   
-  // Get game level from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const gameLevel = urlParams.get('game_level');
+  // Create randomize checkbox
+  const checkboxContainer = document.createElement('div');
+  checkboxContainer.style.position = 'absolute';
+  checkboxContainer.style.top = '20px';
+  checkboxContainer.style.right = '20px';
+  checkboxContainer.style.fontSize = '18px';
+  checkboxContainer.style.fontFamily = 'sans-serif';
   
-  const words = gameLevel === '2' ? level2Words : level1Words;
-  setupGame(words);
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = 'randomizeCheckbox';
+  checkbox.style.marginRight = '8px';
+  
+  const label = document.createElement('label');
+  label.htmlFor = 'randomizeCheckbox';
+  label.textContent = 'Randomize';
+  
+  checkboxContainer.appendChild(checkbox);
+  checkboxContainer.appendChild(label);
+  document.body.appendChild(checkboxContainer);
+  
+  // Get initial randomize state from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const shouldRandomize = urlParams.get('randomize') === 'true';
+  checkbox.checked = shouldRandomize;
+  
+  function getWords() {
+    const words = [...allWords]; // Create a copy
+    if (checkbox.checked) {
+      // Randomize word order using Fisher-Yates shuffle
+      for (let i = words.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [words[i], words[j]] = [words[j], words[i]];
+      }
+    }
+    return words;
+  }
+  
+  // Initial setup
+  let gameInstance = setupGame(getWords());
+  
+  // Handle checkbox change
+  checkbox.addEventListener('change', () => {
+    // Reset the game with new word order
+    gameInstance = setupGame(getWords());
+  });
 }
 
 // Game logic:
@@ -49,8 +87,14 @@ function main() {
 // Implementation details:
 // - Use Canvas to display the word with font size 120px.
 function setupGame(words) {
+  // Clear any existing canvas
+  const existingCanvas = document.querySelector('canvas');
+  if (existingCanvas) {
+    existingCanvas.remove();
+  }
+  
   let currentWordIndex = 0;
-  let spellingState = 'initial'; // states: 'initial', 'display', 'spell', 'gameOver'
+  let spellingState = 'initial'; // states: 'initial', 'whatIsThis', 'display', 'spell', 'gameOver'
   let isSpeaking = false; // Add speaking state
   
   // Create Canvas
@@ -144,7 +188,13 @@ function setupGame(words) {
 
   displayInstructions(); // Show initial instructions
 
-  document.addEventListener('keydown', async (event) => {
+  // Remove existing event listener if any
+  if (window.gameKeyHandler) {
+    document.removeEventListener('keydown', window.gameKeyHandler);
+  }
+
+  // Create new event handler
+  window.gameKeyHandler = async (event) => {
     if (event.code === 'Space' && !isSpeaking) {
       if (currentWordIndex >= words.length) {
         if (spellingState !== 'gameOver') {
@@ -158,19 +208,25 @@ function setupGame(words) {
       const currentWord = words[currentWordIndex];
       
       if (spellingState === 'initial') {
-        spellingState = 'display';
+        spellingState = 'whatIsThis';
         displayWord(currentWord);
+        await speak(`What word is this?`);
+      } else if (spellingState === 'whatIsThis') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Hide the word
         await speak(`How do you spell the word, ${currentWord.replace(/\|/g, '')}?`);
         spellingState = 'spell';
       } else if (spellingState === 'display') {
+        spellingState = 'whatIsThis';
         displayWord(currentWord);
-        await speak(`How do you spell the word, ${currentWord.replace(/\|/g, '')}?`);
-        spellingState = 'spell';
-      } else {
+        await speak(`What word is this?`);
+      } else if (spellingState === 'spell') {
         await spellWord(currentWord);
         currentWordIndex++;
         spellingState = 'display';
       }
     }
-  });
+  };
+  
+  // Add the new event listener
+  document.addEventListener('keydown', window.gameKeyHandler);
 }
