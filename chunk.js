@@ -66,6 +66,8 @@ function main() {
         const j = Math.floor(Math.random() * (i + 1));
         [words[i], words[j]] = [words[j], words[i]];
       }
+      // Limit to 10 words when randomize is enabled
+      return words.slice(0, 10);
     }
     return words;
   }
@@ -75,8 +77,14 @@ function main() {
   
   // Handle checkbox change
   checkbox.addEventListener('change', () => {
-    // Reset the game with new word order
-    gameInstance = setupGame(getWords());
+    // Update URL query parameter and refresh page
+    const url = new URL(window.location);
+    if (checkbox.checked) {
+      url.searchParams.set('randomize', 'true');
+    } else {
+      url.searchParams.delete('randomize');
+    }
+    window.location.href = url.toString();
   });
 }
 
@@ -94,7 +102,8 @@ function setupGame(words) {
   }
   
   let currentWordIndex = 0;
-  let spellingState = 'initial'; // states: 'initial', 'whatIsThis', 'display', 'spell', 'gameOver'
+  let spellingState = 'initial'; // states: 'initial', 'whatIsThis', 'syllables', 'fullWord', 'howToSpell', 'spell', 'display', 'gameOver'
+  let currentSyllableIndex = 0; // Track which syllable we're on
   let isSpeaking = false; // Add speaking state
   
   // Create Canvas
@@ -206,19 +215,52 @@ function setupGame(words) {
       }
 
       const currentWord = words[currentWordIndex];
+      const syllables = currentWord.split('|');
       
       if (spellingState === 'initial') {
         spellingState = 'whatIsThis';
+        currentSyllableIndex = 0; // Reset syllable index for first word
         displayWord(currentWord);
         await speak(`What word is this?`);
+        // After asking "what word is this", show the first syllable highlighted (what will be uttered next)
+        displayWord(currentWord, currentSyllableIndex);
       } else if (spellingState === 'whatIsThis') {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Hide the word
-        await speak(`How do you spell the word, ${currentWord.replace(/\|/g, '')}?`);
+        // Speak the highlighted syllable and highlight the next one
+        spellingState = 'syllables';
+        await speak(syllables[currentSyllableIndex]);
+        currentSyllableIndex++;
+        if (currentSyllableIndex < syllables.length) {
+          displayWord(currentWord, currentSyllableIndex); // Show NEXT syllable highlighted
+        } else {
+          displayWord(currentWord, -1, true); // All syllables done, highlight full word
+        }
+      } else if (spellingState === 'syllables') {
+        if (currentSyllableIndex < syllables.length) {
+          // Speak the highlighted syllable and highlight the next one
+          await speak(syllables[currentSyllableIndex]);
+          currentSyllableIndex++;
+          if (currentSyllableIndex < syllables.length) {
+            displayWord(currentWord, currentSyllableIndex); // Show NEXT syllable highlighted
+          } else {
+            displayWord(currentWord, -1, true); // All syllables done, highlight full word
+          }
+        } else {
+          // All syllables done, now say the full word
+          spellingState = 'fullWord';
+          await speak(currentWord.replace(/\|/g, ''));
+        }
+      } else if (spellingState === 'fullWord') {
+        // Now ask how to spell it
         spellingState = 'spell';
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the word before asking how to spell
+        await speak(`How do you spell the word, ${currentWord.replace(/\|/g, '')}?`);
       } else if (spellingState === 'display') {
         spellingState = 'whatIsThis';
+        currentSyllableIndex = 0; // Reset syllable index for new word
         displayWord(currentWord);
         await speak(`What word is this?`);
+        // After asking "what word is this", show the first syllable highlighted (what will be uttered next)
+        displayWord(currentWord, currentSyllableIndex);
       } else if (spellingState === 'spell') {
         await spellWord(currentWord);
         currentWordIndex++;
