@@ -86,6 +86,23 @@ function main() {
   checkboxContainer.appendChild(label);
   document.body.appendChild(checkboxContainer);
   
+  // Create words left banner
+  const banner = document.createElement('div');
+  banner.id = 'wordsLeftBanner';
+  banner.style.position = 'fixed';
+  banner.style.bottom = '0';
+  banner.style.left = '0';
+  banner.style.width = '100%';
+  banner.style.backgroundColor = '#f0f0f0';
+  banner.style.padding = '10px';
+  banner.style.textAlign = 'center';
+  banner.style.fontSize = '24px';
+  banner.style.fontFamily = 'sans-serif';
+  banner.style.fontWeight = 'bold';
+  banner.style.borderTop = '2px solid #ccc';
+  banner.style.zIndex = '1000';
+  document.body.appendChild(banner);
+  
   // Get initial randomize state from URL
   const urlParams = new URLSearchParams(window.location.search);
   const shouldRandomize = urlParams.get('randomize') === 'true';
@@ -104,6 +121,15 @@ function main() {
     }
     return words;
   }
+  
+  function updateWordsLeftBanner(currentIndex, totalWords) {
+    const banner = document.getElementById('wordsLeftBanner');
+    const wordsLeft = totalWords - currentIndex;
+    banner.textContent = `Words left: ${wordsLeft} / ${totalWords}`;
+  }
+  
+  // Make updateWordsLeftBanner globally accessible for setupGame
+  window.updateWordsLeftBanner = updateWordsLeftBanner;
   
   // Initial setup
   let gameInstance = setupGame(getWords());
@@ -144,10 +170,13 @@ function setupGame(words) {
   canvas.width = 1000;
   canvas.height = 200;
   canvas.style.position = 'absolute';
-  canvas.style.top = '300px';
+  canvas.style.top = '300px'; // Back to original position
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
   ctx.font = '120px sans-serif';
+  
+  // Initialize banner
+  window.updateWordsLeftBanner(currentWordIndex, words.length);
   
   function displayWord(word, highlightChunkIndex = -1, highlightAll = false) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -297,6 +326,7 @@ function setupGame(words) {
       } else if (spellingState === 'spell') {
         await spellWord(currentWord);
         currentWordIndex++;
+        window.updateWordsLeftBanner(currentWordIndex, words.length); // Update banner when moving to next word
         spellingState = 'display';
       }
     }
