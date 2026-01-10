@@ -37,7 +37,8 @@ export const fingerMapping = {
   'm': { hand: 'right', finger: 1 },  // index
   
   // Space bar (both thumbs, but we'll default to right)
-  ' ': { hand: 'right', finger: 0 },  // thumb
+  ' ': { hand: 'left', finger: 0 },  // thumb
+  '.': { hand: 'right', finger: 3 },  // thumb
 };
 
 // Get finger info for a character

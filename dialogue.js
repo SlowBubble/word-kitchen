@@ -20,7 +20,7 @@ export const outroDialogue = {
   speechForUnexpectedKey: 'Game time is over. Go take a break.',
 }
 
-export function buildDialogues(word, level=1, addWelcomeMessage=false) {
+export function buildDialogues(word, level=1, addWelcomeMessage=false, caseSensitive=true, sentenceMode=false) {
   let welcomeMessage = '';
   if (addWelcomeMessage) {
     const name = 'Word Kitchen';
@@ -87,10 +87,10 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         voiceIdx: 0,
     });
     chars.forEach((char, idx) => dialogues.push({
-      speech: idx === 0 ? '' : (chars[idx - 1] === ' ' ? 'space' : chars[idx - 1].toLowerCase()),
+      speech: idx === 0 ? '' : (chars[idx - 1] === ' ' ? 'space' : (chars[idx - 1] !== chars[idx - 1].toLowerCase() ? `capital ${chars[idx - 1].toLowerCase()}` : chars[idx - 1].toLowerCase())),
       stop: true,
-      expectedKey: char.toLowerCase(),
-      speechForUnexpectedKey: `Try typing, ${char === ' ' ? 'space' : char.toLowerCase()}.`,
+      expectedKey: caseSensitive ? char : char.toLowerCase(),
+      speechForUnexpectedKey: `Try typing, ${char === ' ' ? 'space' : (char !== char.toLowerCase() ? `capital ${char.toLowerCase()}` : char.toLowerCase())}.`,
       startHighlightIdx: idx,
       endHighlightIdx: idx,
       display: word,
@@ -98,7 +98,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         renderAfterUttering: true,
     }));
     dialogues.push({
-      speech: `${chars[chars.length - 1] === ' ' ? 'space' : chars[chars.length - 1].toLowerCase()}.`,
+      speech: `${chars[chars.length - 1] === ' ' ? 'space' : (chars[chars.length - 1] !== chars[chars.length - 1].toLowerCase() ? `capital ${chars[chars.length - 1].toLowerCase()}` : chars[chars.length - 1].toLowerCase())}.`,
       display: word,
       voiceIdx: 1,
       renderAfterUttering: true,
@@ -113,9 +113,9 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         voiceIdx: 0,
     });
     chars.forEach((char, idx) => dialogues.push({
-      speech: idx === 0 ? '' : (chars[idx - 1] === ' ' ? 'space' : chars[idx - 1].toLowerCase()),
+      speech: idx === 0 ? '' : (chars[idx - 1] === ' ' ? 'space' : (chars[idx - 1] !== chars[idx - 1].toLowerCase() ? `capital ${chars[idx - 1].toLowerCase()}` : chars[idx - 1].toLowerCase())),
       stop: true,
-      expectedKey: char.toLowerCase(),
+      expectedKey: caseSensitive ? char : char.toLowerCase(),
       speechForUnexpectedKey: word.toLowerCase(),
       startHighlightIdx: idx,
       endHighlightIdx: idx,
@@ -124,7 +124,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         renderAfterUttering: true,
     }));
     dialogues.push({
-      speech: `${chars[chars.length - 1] === ' ' ? 'space' : chars[chars.length - 1].toLowerCase()}.`,
+      speech: `${chars[chars.length - 1] === ' ' ? 'space' : (chars[chars.length - 1] !== chars[chars.length - 1].toLowerCase() ? `capital ${chars[chars.length - 1].toLowerCase()}` : chars[chars.length - 1].toLowerCase())}.`,
       display: word,
       voiceIdx: 1,
       renderAfterUttering: true,
@@ -139,7 +139,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
     delayMs: 400,
   });
   dialogues.push({
-    speech: generateRandomPraise(word),
+    speech: generateRandomPraise(word, sentenceMode),
     display: `🎊 ${word} 🎊`,
     voiceIdx: 0,
     delayMs: 500,
@@ -198,7 +198,7 @@ const exclamations = [
   return exclamations[getRandomInt(exclamations.length)];
 
 }
-function generateRandomPraise(word) {
+function generateRandomPraise(word, sentenceMode = false) {
   const adjectives = [
     'accomplished',
     'consistent',
@@ -269,7 +269,8 @@ function generateRandomPraise(word) {
   const adjIndex = getRandomInt(adjectives.length);
   const adjective = adjectives[adjIndex];
   const adverb = adverbs[getRandomInt(adverbs.length)];
-  return `You are getting ${adverb} ${adjective}, at typing the word, ${word}`;
+  const typeText = sentenceMode ? 'sentence' : 'word';
+  return `You are getting ${adverb} ${adjective}, at typing the ${typeText}, ${word}`;
 }
 
 function getRandomInt(max) {

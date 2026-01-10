@@ -19,11 +19,15 @@ export class WordCard extends HTMLElement {
         if (sentenceMode && startHighlightIdx >= 0 && idx <= startHighlightIdx) {
           // Special handling for spaces - use semi-transparent red background only for current space
           if (char === ' ' && idx === startHighlightIdx) {
-            return `<span style='background-color: rgba(255, 0, 0, 0.5); color: black;'>${char}</span>`;
+            return `<span style='background-color: rgba(255, 0, 0, 0.5); color: black; opacity: 0.3;'>${char}</span>`;
           }
           // Regular red text for non-space characters
           else if (char === ' ') {
             return char; // Previous spaces remain normal
+          }
+          // Current character being typed should be red but opaque
+          if (idx === startHighlightIdx) {
+            return `<span style='color:red; opacity: 0.3;'>${char}</span>`;
           }
           return `<span style='color:red'>${char}</span>`;
         }
@@ -31,9 +35,17 @@ export class WordCard extends HTMLElement {
         else if (!sentenceMode && startHighlightIdx <= idx && idx <= endHighlightIdx) {
           // Special handling for spaces in non-sentence mode too
           if (char === ' ') {
-            return `<span style='background-color: rgba(255, 0, 0, 0.5); color: black;'>${char}</span>`;
+            return `<span style='background-color: rgba(255, 0, 0, 0.5); color: black; opacity: 0.3;'>${char}</span>`;
+          }
+          // Current character being typed should be red but opaque
+          if (idx === startHighlightIdx) {
+            return `<span style='color:red; opacity: 0.3;'>${char}</span>`;
           }
           return `<span style='color:red'>${char}</span>`;
+        }
+        // Make untyped letters opaque (letters that haven't been typed yet, including current)
+        else if (startHighlightIdx >= 0 && idx >= startHighlightIdx) {
+          return `<span style='opacity: 0.3'>${char}</span>`;
         }
         return char;
       });

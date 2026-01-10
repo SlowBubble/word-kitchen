@@ -1,13 +1,14 @@
 import { buildDialogues, introDialogue, outroDialogue } from "./dialogue.js";
   
 export class WordsMgr {
-  constructor(wordCard, words, level, showFingers = true, sentenceMode = false) {
+  constructor(wordCard, words, level, showFingers = true, sentenceMode = false, caseSensitive = true) {
     this.wordCard = wordCard;
     this.level = level;
     this.showFingers = showFingers;
     this.sentenceMode = sentenceMode;
+    this.caseSensitive = caseSensitive;
     this.dialogues = words.flatMap((word, idx) => {
-      return buildDialogues(word, level, idx === 0);
+      return buildDialogues(word, level, idx === 0, caseSensitive, sentenceMode);
     });
     this.dialogues.unshift(introDialogue);
     this.dialogues.push(outroDialogue);
