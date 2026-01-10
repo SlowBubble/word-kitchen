@@ -1,10 +1,11 @@
 import { buildDialogues, introDialogue, outroDialogue } from "./dialogue.js";
   
 export class WordsMgr {
-  constructor(wordCard, words, level, showFingers = true) {
+  constructor(wordCard, words, level, showFingers = true, sentenceMode = false) {
     this.wordCard = wordCard;
     this.level = level;
     this.showFingers = showFingers;
+    this.sentenceMode = sentenceMode;
     this.dialogues = words.flatMap((word, idx) => {
       return buildDialogues(word, level, idx === 0);
     });
@@ -21,7 +22,7 @@ export class WordsMgr {
     const saturation = (hash % 23) + 50;
     const lightness = (hash % 3) + 95;
     const hideAfterHighlight = this.level === 4;
-    this.wordCard.render(word, startHighlightIdx, endHighlightIdx, hue, saturation, lightness, hideAfterHighlight, this.level, expectedChar, this.showFingers);
+    this.wordCard.render(word, startHighlightIdx, endHighlightIdx, hue, saturation, lightness, hideAfterHighlight, this.level, expectedChar, this.showFingers, this.sentenceMode);
   }
 
   async execute(inputKey, normalFlow=true) {

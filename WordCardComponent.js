@@ -5,7 +5,7 @@ export class WordCard extends HTMLElement {
     super();
   }
 
-  render(word, startHighlightIdx = -1, endHighlightIdx = -1, hue = 100, saturation = 100, lightness = 100, hideAfterHighlight = false, gameLevel = 1, expectedChar = null, showFingers = true) {
+  render(word, startHighlightIdx = -1, endHighlightIdx = -1, hue = 100, saturation = 100, lightness = 100, hideAfterHighlight = false, gameLevel = 1, expectedChar = null, showFingers = true, sentenceMode = false) {
     let annotatedChars;
     if (hideAfterHighlight && endHighlightIdx >= 0) {
       annotatedChars = word.split('').map((char, idx) => {
@@ -25,7 +25,7 @@ export class WordCard extends HTMLElement {
       fingerGuidanceHtml = generateFingerGuidanceHtml(expectedChar);
     }
     
-    this.innerHTML = genHtml(annotatedChars.join(''), hue, saturation, lightness, fingerGuidanceHtml);
+    this.innerHTML = genHtml(annotatedChars.join(''), hue, saturation, lightness, fingerGuidanceHtml, sentenceMode);
   }
 }
 
@@ -78,7 +78,7 @@ function generateFingerGuidanceHtml(expectedChar) {
 // 20-220 are boys color
 // 60-100
 // 80-95
-const genHtml = (sentenceHtml, hue = 100, saturation = 100, lightness = 100, fingerGuidanceHtml = '') => `
+const genHtml = (sentenceHtml, hue = 100, saturation = 100, lightness = 100, fingerGuidanceHtml = '', sentenceMode = false) => `
 <style>
 #story-card {
   display: flex;
@@ -88,7 +88,7 @@ const genHtml = (sentenceHtml, hue = 100, saturation = 100, lightness = 100, fin
   width: 990px;
   height: 500px;
   font-family: Verdana, sans-serif;
-  font-size: 160px;
+  font-size: ${sentenceMode ? '80px' : '160px'};
   border: solid 2px black;
   position: relative;
 }
