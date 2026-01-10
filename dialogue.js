@@ -23,7 +23,7 @@ export const outroDialogue = {
 export function buildDialogues(word, level=1, addWelcomeMessage=false, caseSensitive=true, sentenceMode=false) {
   let welcomeMessage = '';
   if (addWelcomeMessage) {
-    const name = 'Word Kitchen';
+    const name = sentenceMode ? 'Sentence Kitchen' : 'Word Kitchen';
     welcomeMessage = `Welcome to ${name}! Let's get started.`;
   }
   let dialogues = [];

@@ -47,6 +47,9 @@ function main() {
   // Create case sensitive toggle checkbox
   createCaseSensitiveToggle(caseSensitive);
   
+  // Update page title based on mode
+  document.title = sentenceMode ? 'Sentence Kitchen' : 'Word Kitchen';
+  
   const wordCard = new WordCard();
   document.body.appendChild(wordCard);
 
