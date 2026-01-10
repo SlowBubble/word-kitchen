@@ -2,6 +2,31 @@ main();
 
 function main() {
   // Combined word list
+  const allWords2 = [
+    'Fa|ther',
+    'Eng|lish',
+    'Bro|ther',
+    'Grand|pa',
+    'An|gry',
+    'Goo|gle',
+    'Cost|co',
+    'Ten|nis',
+    'Bas|ket',
+    'Un|cle',
+    'Aun|tie',
+    'Cou|sin',
+    'Bo|dy',
+    'Fin|ger',
+    'Gar|den',
+    'Pi|ano',
+    'Ac|tor',
+    'Tea|cher',
+    'Coo|kie',
+    'Bud|dy',
+    'Pro|vo|lone',
+    'Win|dy',
+    'Stor|my',
+  ];
   const allWords = [
     'Ba|na|na',
     'Ma|ma',
@@ -106,10 +131,11 @@ function main() {
   // Get initial randomize state from URL
   const urlParams = new URLSearchParams(window.location.search);
   const shouldRandomize = urlParams.get('randomize') === 'true';
+  const useAlternate = urlParams.get('alternate') === '1';
   checkbox.checked = shouldRandomize;
   
   function getWords() {
-    const words = [...allWords]; // Create a copy
+    const words = [...(useAlternate ? allWords2 : allWords)]; // Create a copy, use allWords2 if alternate=1
     if (checkbox.checked) {
       // Randomize word order using Fisher-Yates shuffle
       for (let i = words.length - 1; i > 0; i--) {
