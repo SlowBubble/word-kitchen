@@ -1,5 +1,13 @@
+# m2d
+- Let's make this change in general (both sentence and non-sentence mode)
+  - Add a query param for case_sensitive and default to true and have a checkbox to toggle it;
+    - If enabled, all letters must match the case.
+  - For highlighting, let's actually opaque the letters that has not been typed.
+
 
 # m2c
+- When uttering the letter user has typed for " ", say "space".
+- When saying "Try typing" for the letter " ", you should say "Try typing space" instead.
 
 # m2b
 - for sentence mode, when highlighting the letter you need to type in red, also highlight all previous things in red.

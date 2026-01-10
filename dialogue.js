@@ -60,7 +60,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         voiceIdx: 0,
       });
     chars.forEach((char, idx) => dialogues.push({
-      speech: char.toLowerCase(),
+      speech: char === ' ' ? 'space' : char.toLowerCase(),
       stop: false,
       startHighlightIdx: idx,
       endHighlightIdx: idx,
@@ -87,10 +87,10 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         voiceIdx: 0,
     });
     chars.forEach((char, idx) => dialogues.push({
-      speech: idx === 0 ? '' : chars[idx - 1].toLowerCase(),
+      speech: idx === 0 ? '' : (chars[idx - 1] === ' ' ? 'space' : chars[idx - 1].toLowerCase()),
       stop: true,
       expectedKey: char.toLowerCase(),
-      speechForUnexpectedKey: `Try typing, ${char.toLowerCase()}.`,
+      speechForUnexpectedKey: `Try typing, ${char === ' ' ? 'space' : char.toLowerCase()}.`,
       startHighlightIdx: idx,
       endHighlightIdx: idx,
       display: word,
@@ -98,7 +98,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         renderAfterUttering: true,
     }));
     dialogues.push({
-      speech: `${chars[chars.length - 1].toLowerCase()}.`,
+      speech: `${chars[chars.length - 1] === ' ' ? 'space' : chars[chars.length - 1].toLowerCase()}.`,
       display: word,
       voiceIdx: 1,
       renderAfterUttering: true,
@@ -113,7 +113,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         voiceIdx: 0,
     });
     chars.forEach((char, idx) => dialogues.push({
-      speech: idx === 0 ? '' : chars[idx - 1].toLowerCase(),
+      speech: idx === 0 ? '' : (chars[idx - 1] === ' ' ? 'space' : chars[idx - 1].toLowerCase()),
       stop: true,
       expectedKey: char.toLowerCase(),
       speechForUnexpectedKey: word.toLowerCase(),
@@ -124,7 +124,7 @@ export function buildDialogues(word, level=1, addWelcomeMessage=false) {
         renderAfterUttering: true,
     }));
     dialogues.push({
-      speech: `${chars[chars.length - 1].toLowerCase()}.`,
+      speech: `${chars[chars.length - 1] === ' ' ? 'space' : chars[chars.length - 1].toLowerCase()}.`,
       display: word,
       voiceIdx: 1,
       renderAfterUttering: true,
