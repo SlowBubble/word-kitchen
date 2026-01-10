@@ -14,7 +14,29 @@ export class WordCard extends HTMLElement {
         return char;
       });
     } else {
-      annotatedChars = word.split('').map((char, idx) => startHighlightIdx <= idx && idx <= endHighlightIdx ? `<span style='color:red'>${char}</span>` : char);
+      annotatedChars = word.split('').map((char, idx) => {
+        // In sentence mode, highlight current character and all previous characters
+        if (sentenceMode && startHighlightIdx >= 0 && idx <= startHighlightIdx) {
+          // Special handling for spaces - use semi-transparent red background only for current space
+          if (char === ' ' && idx === startHighlightIdx) {
+            return `<span style='background-color: rgba(255, 0, 0, 0.5); color: black;'>${char}</span>`;
+          }
+          // Regular red text for non-space characters
+          else if (char === ' ') {
+            return char; // Previous spaces remain normal
+          }
+          return `<span style='color:red'>${char}</span>`;
+        }
+        // Original logic for non-sentence mode
+        else if (!sentenceMode && startHighlightIdx <= idx && idx <= endHighlightIdx) {
+          // Special handling for spaces in non-sentence mode too
+          if (char === ' ') {
+            return `<span style='background-color: rgba(255, 0, 0, 0.5); color: black;'>${char}</span>`;
+          }
+          return `<span style='color:red'>${char}</span>`;
+        }
+        return char;
+      });
     }
     
     // Show finger guidance for levels 3 and 4 when expecting a character and showFingers is true

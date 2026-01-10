@@ -1,6 +1,9 @@
 
+# m2c
+
 # m2b
 - for sentence mode, when highlighting the letter you need to type in red, also highlight all previous things in red.
+- for space, highlight it only when you need to type it, by using a 0.5 opaque red rectangle that fills that space.
 
 # m2a
 - In main.js, add a query param for sentence=1 and a checkbox on the upper right to toggle it
