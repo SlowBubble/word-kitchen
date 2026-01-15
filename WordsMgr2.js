@@ -50,7 +50,16 @@ export class WordsMgr {
     if (!banner) return;
     
     const percentage = this.totalAttempts === 0 ? 0 : Math.round((this.correctAttempts / this.totalAttempts) * 100);
-    banner.textContent = `${this.correctAttempts} / ${this.totalAttempts} = ${percentage}%`;
+    
+    // Determine grade based on percentage
+    let grade;
+    if (percentage >= 90) grade = 'A';
+    else if (percentage >= 80) grade = 'B';
+    else if (percentage >= 70) grade = 'C';
+    else if (percentage >= 60) grade = 'D';
+    else grade = 'F';
+    
+    banner.textContent = `${this.correctAttempts} / ${this.totalAttempts} = ${percentage}% [${grade}]`;
   }
 
   render(word, startHighlightIdx=-1, endHighlightIdx=-1, expectedChar=null) {
