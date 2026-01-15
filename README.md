@@ -1,3 +1,6 @@
+# m2e ✓
+- For sentence mode, let's display a score at the bottom (# correct input / # attempts = xx%) where xx has zero decimals
+
 # m2d
 - Let's make this change in general (both sentence and non-sentence mode)
   - Add a query param for case_sensitive and default to true and have a checkbox to toggle it;

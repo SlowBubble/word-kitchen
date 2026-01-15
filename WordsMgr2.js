@@ -15,6 +15,42 @@ export class WordsMgr {
     this.dialogueIdx = 0;
     this.stuck = false;
     this.isBusyActing = false;
+    
+    // Score tracking for sentence mode
+    this.correctAttempts = 0;
+    this.totalAttempts = 0;
+    
+    // Create score banner if in sentence mode
+    if (this.sentenceMode) {
+      this.createScoreBanner();
+    }
+  }
+  
+  createScoreBanner() {
+    const banner = document.createElement('div');
+    banner.id = 'scoreBanner';
+    banner.style.position = 'fixed';
+    banner.style.bottom = '0';
+    banner.style.left = '0';
+    banner.style.width = '100%';
+    banner.style.backgroundColor = '#f0f0f0';
+    banner.style.padding = '10px';
+    banner.style.textAlign = 'center';
+    banner.style.fontSize = '96px';
+    banner.style.fontFamily = 'sans-serif';
+    banner.style.fontWeight = 'bold';
+    banner.style.borderTop = '2px solid #ccc';
+    banner.style.zIndex = '1000';
+    document.body.appendChild(banner);
+    this.updateScoreBanner();
+  }
+  
+  updateScoreBanner() {
+    const banner = document.getElementById('scoreBanner');
+    if (!banner) return;
+    
+    const percentage = this.totalAttempts === 0 ? 0 : Math.round((this.correctAttempts / this.totalAttempts) * 100);
+    banner.textContent = `${this.correctAttempts} / ${this.totalAttempts} = ${percentage}%`;
   }
 
   render(word, startHighlightIdx=-1, endHighlightIdx=-1, expectedChar=null) {
@@ -37,6 +73,13 @@ export class WordsMgr {
       console.log('input: ', inputKey, ', expected: ', dialogue.expectedKey);
     }
     if (!dialogue.expectedKey || inputKey === dialogue.expectedKey) {
+      // Track correct attempt in sentence mode
+      if (this.sentenceMode && dialogue.expectedKey && normalFlow) {
+        this.correctAttempts++;
+        this.totalAttempts++;
+        this.updateScoreBanner();
+      }
+      
       this.dialogueIdx = (this.dialogueIdx + 1) % this.dialogues.length;
       const nextDialogue = this.dialogues[this.dialogueIdx];
       let goodVoices = window.speechSynthesis.getVoices().filter(voice => voice.lang === 'en-US')
@@ -60,6 +103,12 @@ export class WordsMgr {
         await this.execute(nextDialogue.expectedKey, false);
       }
     } else {
+      // Track incorrect attempt in sentence mode
+      if (this.sentenceMode && dialogue.expectedKey && normalFlow) {
+        this.totalAttempts++;
+        this.updateScoreBanner();
+      }
+      
       await utter(dialogue.speechForUnexpectedKey || generateWrongLetterMessage());
     }
 
