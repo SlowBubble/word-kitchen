@@ -91,9 +91,34 @@ export class WordsMgr {
       
       this.dialogueIdx = (this.dialogueIdx + 1) % this.dialogues.length;
       const nextDialogue = this.dialogues[this.dialogueIdx];
-      let goodVoices = window.speechSynthesis.getVoices().filter(voice => voice.lang === 'en-US')
-      goodVoices = goodVoices.slice(0, 2);
-      goodVoices.reverse();
+      
+      // Set up voices: first voice is default, second voice is male
+      const allVoices = window.speechSynthesis.getVoices();
+      const defaultVoice = allVoices[0]; // First voice as default
+      
+      // Try to find a good male voice
+      const maleVoice = allVoices.find(v =>
+        v.name.includes("Google US English") ||
+        v.name.includes("David") ||
+        v.name.includes("Daniel") ||
+        v.name.toLowerCase().includes("male")
+      );
+      
+      // Fallback to en-AU voices if no male voice found
+      let secondVoice = maleVoice;
+      if (!secondVoice) {
+        let fallbackVoices = allVoices.filter(voice => voice.lang === 'en-AU');
+        if (fallbackVoices.length === 0) {
+          fallbackVoices = allVoices.filter(voice => voice.lang === 'en-US');
+        }
+        if (fallbackVoices.length > 0) {
+          secondVoice = fallbackVoices[1] || fallbackVoices[0];
+        } else {
+          secondVoice = defaultVoice;
+        }
+      }
+      
+      const goodVoices = [secondVoice, defaultVoice];
       const voice = goodVoices[nextDialogue.voiceIdx % goodVoices.length];
       const renderFunc = _ => {
         const expectedChar = (this.level === 3 || this.level === 4) && nextDialogue.expectedKey ? nextDialogue.expectedKey : null;
