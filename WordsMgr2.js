@@ -8,7 +8,12 @@ export class WordsMgr {
     this.sentenceMode = sentenceMode;
     this.caseSensitive = caseSensitive;
     this.dialogues = words.flatMap((word, idx) => {
-      return buildDialogues(word, level, idx === 0, caseSensitive, sentenceMode);
+      const dialogues = buildDialogues(word, level, idx === 0, caseSensitive, sentenceMode);
+      // Mark the first dialogue of each word/sentence for score reset
+      if (dialogues.length > 0) {
+        dialogues[0].isFirstOfWord = true;
+      }
+      return dialogues;
     });
     this.dialogues.unshift(introDialogue);
     this.dialogues.push(outroDialogue);
@@ -49,7 +54,12 @@ export class WordsMgr {
     const banner = document.getElementById('scoreBanner');
     if (!banner) return;
     
-    const percentage = this.totalAttempts === 0 ? 0 : Math.round((this.correctAttempts / this.totalAttempts) * 100);
+    if (this.totalAttempts === 0) {
+      banner.textContent = '';
+      return;
+    }
+    
+    const percentage = Math.round((this.correctAttempts / this.totalAttempts) * 100);
     
     // Determine grade based on percentage
     let grade;
@@ -82,6 +92,13 @@ export class WordsMgr {
       console.log('input: ', inputKey, ', expected: ', dialogue.expectedKey);
     }
     if (!dialogue.expectedKey || inputKey === dialogue.expectedKey) {
+      // Reset score at the start of each new word/sentence
+      if (this.sentenceMode && dialogue.isFirstOfWord) {
+        this.correctAttempts = 0;
+        this.totalAttempts = 0;
+        this.updateScoreBanner();
+      }
+      
       // Track correct attempt in sentence mode
       if (this.sentenceMode && dialogue.expectedKey && normalFlow) {
         this.correctAttempts++;
